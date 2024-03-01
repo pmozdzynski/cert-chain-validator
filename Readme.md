@@ -4,7 +4,7 @@ This program is a simple command-line tool written in Go to validate certificate
 
 ## Usage
 
-1. Clone the repository or copy the `main.go` file to your local machine.
+1. Clone the repository or copy the `validate.go` file to your local machine.
 2. Run the program using the `go run` command with the following syntax:
    ```sh
    go run validate.go cert.pem chain.pem
