@@ -1,6 +1,6 @@
 # Certificate Validator
 
-This program is a simple command-line tool written in Go to validate certificates and certificate chains. It reads certificate and certificate chain files, parses them, and then verifies the chain of trust by checking the signatures between the certificates in the chain.
+This program is a simple command-line tool written in Go to validate certificates and certificate chains. It reads certificate and certificate chain files, parses them, and then verifies the chain of trust by checking the signatures between the certificates in the chain. Additionally it is checking the expiry date on both, the certificate and its chain.
 
 ## Usage
 
