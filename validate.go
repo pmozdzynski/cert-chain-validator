@@ -32,13 +32,14 @@ func parseCerts(filename string) ([]*x509.Certificate, error) {
 
 func verifyChain(certs []*x509.Certificate) {
 	for i := len(certs) - 1; i > 0; i-- {
+		expiry := certs[i].NotAfter
 		if err := certs[i-1].CheckSignatureFrom(certs[i]); err != nil {
-			fmt.Printf("Certificate at position %d has abnormality. It's not signed by certificate at position %d. Error: %v\n", i+1, i, err)
+			fmt.Printf("Certificate at position %d has abnormality. It's not signed by certificate at position %d. Error: %v - Expires: %v\n", i+1, i, err, expiry)
 		} else {
-			fmt.Printf("Certificate at position %d is normal. It's signed by certificate at position %d.\n", i+1, i)
+			fmt.Printf("Certificate at position %d is normal. It's signed by certificate at position %d. Expires: %v\n", i+1, i, expiry)
 		}
 	}
-	fmt.Println("Certificate at position 1 is the Root Certificate.")
+	fmt.Printf("Certificate at position 1 is the Root Certificate. Expires: %v\n", certs[0].NotAfter)
 }
 
 func validateCertAgainstChain(cert *x509.Certificate, chain []*x509.Certificate) error {
@@ -87,17 +88,27 @@ func main() {
 		os.Exit(1)
 	}
 
+	fmt.Println("Certificate Expiry Dates:")
+	for i, cert := range certs {
+		fmt.Printf("Certificate at position %d expires on: %v\n", i+1, cert.NotAfter)
+	}
+
+	fmt.Println("\nChain Expiry Dates:")
+	for i, cert := range chain {
+		fmt.Printf("Certificate at position %d expires on: %v\n", i+1, cert.NotAfter)
+	}
+
 	// Restores the detailed output for the chain's validation
-	fmt.Println("Verifying certificate chain:")
+	fmt.Println("\nVerifying certificate chain:")
 	verifyChain(chain) // Note: this uses the original verifyChain logic
 
 	// The added step for validating an end-entity certificate against the chain
 	if len(certs) > 0 {
-		fmt.Println("Validating certificate against the chain:")
+		fmt.Println("\nValidating certificate against the chain:")
 		if err := validateCertAgainstChain(certs[0], chain); err != nil {
 			fmt.Printf("Certificate validation against chain failed: %v\n", err)
 		}
 	} else {
-		fmt.Println("No certificates found to validate.")
+		fmt.Println("\nNo certificates found to validate.")
 	}
 }
