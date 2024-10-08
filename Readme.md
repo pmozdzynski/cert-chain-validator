@@ -28,6 +28,16 @@ This repository contains two simple command-line tools written in Go to validate
    ```
    - `combined.pem`: The path to the file containing both the certificate and the CA bundle.
 
+### validate_remote.go
+
+1. Clone the repository or copy the `validate_remote.go` file to your local machine.
+2. Run the program using the `go run` command with the following syntax:
+   ```sh
+   go run validate_remote.go foo.bar.com:443
+   ```
+   - where foo.bar.com:443 - The address and port of the remote server from which the certificate should be fetched and validated.
+
+
 ## Features
 
 ### validate.go
@@ -44,6 +54,12 @@ This repository contains two simple command-line tools written in Go to validate
 - Outputs the validation status of each certificate in the bundle.
 - Checks the expiry dates of the certificates.
 
-## Dependencies
+### validate_remote.go
+Connects to a remote server over TLS and fetches the server's certificate chain.
+Verifies the certificate chain by checking the signatures between certificates.
+Outputs the validation status of each certificate in the chain.
+Checks the expiry dates of the certificates.
+Validates the server's certificate against the rest of the chain.
 
-- Go Standard Library (No external dependencies required)
+### Dependencies
+Go Standard Library (No external dependencies required)
