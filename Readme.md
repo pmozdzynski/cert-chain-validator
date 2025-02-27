@@ -49,15 +49,7 @@ If you need to run `validate_remote.go` inside a Kubernetes pod, follow these st
    ```
 
 2. **Copy the binary to the Kubernetes Pod**
-   ```sh
-   kubectl cp validate_remote <pod-name>:validate_remote
-   ```
-   Replace `<pod-name>` with the actual pod name.
-
 3. **Run the validation inside the pod**
-   ```sh
-   kubectl exec -it <pod-name> -- ./validate_remote example.com:443
-   ```
 
 ### cert_downloader.go
 
