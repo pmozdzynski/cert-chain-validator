@@ -45,7 +45,7 @@ If you need to run `validate_remote.go` inside a Kubernetes pod, follow these st
 
 1. **Build the binary for Linux (`amd64`)**
    ```sh
-   GOOS=linux GOARCH=amd64 go build -o validate_remote validate_remote.go
+   GOOS=linux GOARCH=amd64 go build -o ./validate_remote validate_remote.go
    ```
 
 2. **Copy the binary to the Kubernetes Pod**
