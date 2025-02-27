@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// Parses certificates from a PEM file
 func parseCerts(filename string) ([]*x509.Certificate, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -30,18 +31,25 @@ func parseCerts(filename string) ([]*x509.Certificate, error) {
 	return certs, nil
 }
 
-func verifyChain(certs []*x509.Certificate) {
+// Verifies the certificate chain and returns a boolean indicating validity
+func verifyChain(certs []*x509.Certificate) bool {
+	isValid := true
+
 	for i := len(certs) - 1; i > 0; i-- {
 		expiry := certs[i].NotAfter
 		if err := certs[i-1].CheckSignatureFrom(certs[i]); err != nil {
 			fmt.Printf("Certificate at position %d has abnormality. It's not signed by certificate at position %d. Error: %v - Expires: %v\n", i+1, i, err, expiry)
+			isValid = false
 		} else {
 			fmt.Printf("Certificate at position %d is normal. It's signed by certificate at position %d. Expires: %v\n", i+1, i, expiry)
 		}
 	}
 	fmt.Printf("Certificate at position 1 is the Root Certificate. Expires: %v\n", certs[0].NotAfter)
+
+	return isValid
 }
 
+// Validates a certificate against the provided chain
 func validateCertAgainstChain(cert *x509.Certificate, chain []*x509.Certificate) error {
 	roots := x509.NewCertPool()
 	intermediates := x509.NewCertPool()
@@ -98,17 +106,17 @@ func main() {
 		fmt.Printf("Certificate at position %d expires on: %v\n", i+1, cert.NotAfter)
 	}
 
-	// Restores the detailed output for the chain's validation
+	// Verifying the certificate chain
 	fmt.Println("\nVerifying certificate chain:")
-	verifyChain(chain) // Note: this uses the original verifyChain logic
+	chainValid := verifyChain(chain)
 
-	// The added step for validating an end-entity certificate against the chain
-	if len(certs) > 0 {
+	// Only validate the first (leaf) certificate if the chain is valid
+	if chainValid {
 		fmt.Println("\nValidating certificate against the chain:")
 		if err := validateCertAgainstChain(certs[0], chain); err != nil {
 			fmt.Printf("Certificate validation against chain failed: %v\n", err)
 		}
 	} else {
-		fmt.Println("\nNo certificates found to validate.")
+		fmt.Println("\n ERROR !!! Skipping certificate validation due to errors in the certificate chain. ERROR!!!")
 	}
 }
