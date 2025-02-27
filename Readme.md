@@ -39,6 +39,26 @@ This repository contains few simple command-line tools written in Go to validate
    ```
    - where foo.bar.com:443 - The address and port of the remote server from which the certificate should be fetched and validated.
 
+#### Running validate_remote.go in Kubernetes Pod
+
+If you need to run `validate_remote.go` inside a Kubernetes pod, follow these steps:
+
+1. **Build the binary for Linux (`amd64`)**
+   ```sh
+   GOOS=linux GOARCH=amd64 go build -o validate_remote validate_remote.go
+   ```
+
+2. **Copy the binary to the Kubernetes Pod**
+   ```sh
+   kubectl cp validate_remote <pod-name>:validate_remote
+   ```
+   Replace `<pod-name>` with the actual pod name.
+
+3. **Run the validation inside the pod**
+   ```sh
+   kubectl exec -it <pod-name> -- validate_remote example.com:443
+   ```
+
 ### cert_downloader.go
 
 1. Clone the repository or copy the `cert_downloader.go` file to your local machine.
@@ -49,7 +69,6 @@ This repository contains few simple command-line tools written in Go to validate
    - `foo.bar.com:443` - The address and port of the remote server (e.g., example.com:443).
    - `cert.pem`: The file path where the server's certificate will be saved.
    - `chain.pem`: The file path where the certificate chain (intermediates and root) will be saved.
-
 
 ## Features
 
@@ -79,3 +98,4 @@ Downloads the server's certificate and its chain from a remote server and saves 
 
 ### Dependencies
 Go Standard Library (No external dependencies required)
+
